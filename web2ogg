@@ -1,0 +1,115 @@
+#!/bin/sh
+# author : Gudzenko Gennadiy aka mixafree
+# email  : remixafree@gmail.com
+# version: 0.1.0
+# date   : 2017.11.05
+# license: MIT
+
+echo 'web2ogg v.0.1.0'
+echo 'Transcoding in batch mode mp4|m4a files into Ogg Vorbis with High Quality.'
+
+# Count files.
+CNT=1
+
+# Default settings.
+path=${HOME}
+AR=44100
+AC=2
+Q=8
+
+usage(){
+   echo "Usage: web2ogg [-r] | [-c] | [-q] <path to files>"
+   exit 1
+}
+
+help(){
+   echo 'Usage: web2ogg [-r] | [-c] | [-q] <path to files>'
+   echo
+   echo '   Transcoding in batch mode directory containing mp4 or m4a files'
+   echo '   into Ogg Vorbis with intermediate decoding into a wav file'
+   echo '   for High Quality. The order of the parameters is not important,'
+   echo '   but the path to the files should be the last argument.'
+   echo '   The file path can be a relative or absolute.'
+   echo
+   echo 'Options:'
+   echo '   -r          Set samplerate (default 44100).'
+   echo '               Other sampling rates:'
+   echo '                   48000, 44100, 32000, 22050, 11025, 8000.'
+   echo '   -c          Set channels 1 or 2 (default 2).'
+   echo '   -q          Set quality -2...10 (default 8).'
+   echo '   -h, --help  For this help.'
+   echo
+   echo 'Example:'
+   echo '   web2ogg -r 48000 /home/foo/radio'
+   echo '   web2ogg -c 1 -r 22050 ./'
+   echo '   web2ogg .'
+   echo
+   echo '   Develop Gudzenko Gennadiy aka mixafree'
+   echo '   november 2017, remixafree@gmail.com'
+   exit 1
+}
+
+# If no args - view usage and exit.
+[ $# == 0 ] && usage
+
+# Options.
+while getopts "r:c:q:h :-help" opts; do
+   case $opts in
+      r)
+         AR=$OPTARG
+         ;;
+      c)
+         AC=$OPTARG
+         ;;
+      q)
+         Q=$OPTARG
+         ;;
+      -help|h|*)
+         help
+         ;;
+   esac
+done
+
+# Last argument is path.
+args=("$@")
+last="(( $# - 1 ))"
+[[ ${args[$last]} =~ ^[/|.] ]] && path="${args[$last]}"
+
+# Check last slash into path.
+[[ $path =~ [^/]+$ ]] && path="$path/"
+
+echo "Current settings: ${AR}Hz, ${AC}ch, q${Q}"
+echo "Path: $path"
+
+list=`ls $path | grep -P '\.(mp4|m4a)$'`
+
+[[ -z "${list}" ]] && echo 'No files for transcode.' && exit 1
+
+# Remeber default settings IFS.
+OIFS="$IFS"
+IFS=$'\n'
+
+# Main batch loop
+for c in ${list}; do
+   echo -n "transcode ${c} ..."
+   # Extract and decode audio track to wav-file(s).
+   in=`echo "${c}" | sed -e 's/\.\(mp4\|m4a\)$/\.wav/'`
+   ffmpeg -i "${path}${c}" -vn -c:a pcm_s16le -ar $AR -ac $AC -y "${path}${in}" > /dev/null 2>&1 &&
+
+   # Encode wav-file(s) to Vorbis (ogg).
+   on=`echo "${in}" | sed -e 's/\.\wav$/\.ogg/'`
+   ffmpeg -i "${path}${in}" -c:a libvorbis -q:a $Q -y "${path}${on}" > /dev/null 2>&1 &&
+
+   # Delete the intermediate file.
+   rm -f "${path}${in}"
+
+   # Current iteration complete.
+   echo -e "\033[1K\r${CNT} - ${on} [ done ]"
+   ((CNT++))
+done
+
+# Return the default settings.
+IFS="$OIFS"
+
+echo 'All complete'
+exit 0
