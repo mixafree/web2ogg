@@ -13,19 +13,19 @@ Requirements
 Examples
 ---------
 
-   `web2ogg -h` or `web2ogg --help`
-   `web2ogg -r 48000 /home/foo/podcasts`
-   `web2ogg -c 1 -r 22050 ./`
-   `web2ogg .`
+   1. `web2ogg -h` or `web2ogg --help`
+   2. `web2ogg -r 48000 /home/foo/podcasts`
+   3. `web2ogg -c 1 -r 22050 ./`
+   4. `web2ogg .`
 
 Options
 --------
-   `-r          Set samplerate (default 44100).`
-               `Other sampling rates:`
-                   `48000, 44100, 32000, 22050, 11025, 8000.`
-   `-c          Set channels 1 or 2 (default 2).`
-   `-q          Set quality -2...10 (default 8).`
-   `-h, --help  For this help.`
+    -r          Set samplerate (default 44100).
+                Other sampling rates:
+                   48000, 44100, 32000, 22050, 11025, 8000.
+    -c          Set channels 1 or 2 (default 2).
+    -q          Set quality -2...10 (default 8).
+    -h, --help  For this help.
 
 The order of the parameters is not important, but the path to the files should be the last argument.
 The file path can be a relative or absolute.

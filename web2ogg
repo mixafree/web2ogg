@@ -72,7 +72,7 @@ done
 # Last argument is path (if exists).
 args=("$@")
 last="(( $# - 1 ))"
-if [[ ${args[$last]} =~ ^(\.\/|\/|\.) ]]; then
+if [[ ${args[$last]} =~ ^(\.\/|\/|\.|~\/) ]]; then
    path="${args[$last]}"
 else
    usage
