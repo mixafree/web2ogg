@@ -88,7 +88,7 @@ echo "Path: $path"
 
 list=`ls $path | grep -P '\.(mp4|m4a)$'`
 
-[[ -z "${list}" ]] && echo 'No files for transcoding.' && exit 1
+[[ -z "${list}" ]] && echo 'No files for transcoding.' && exit 1;
 
 # Remeber default settings IFS.
 OIFS="$IFS"
