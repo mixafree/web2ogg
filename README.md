@@ -37,7 +37,7 @@ Install
    3. `cd ~/bin`
    4. `chmod +x web2ogg`
    5. add in `~/.bashrc` this line:
-          export PATH=$PATH:/home/..user..>/bin
+          export PATH=$PATH:/home/..user../bin
 
 Develop Hennadiy Hudzenko aka mixafree.
 november 2017, remixafree@gmail.com
